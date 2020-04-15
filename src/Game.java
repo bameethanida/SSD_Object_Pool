@@ -7,12 +7,19 @@ public class Game extends Observable {
     private int width = 600;
     private int height = 600;
 
+    private List<Bullet> bulletPool;
     private List<Bullet> bullets;
     private Thread mainLoop;
     private boolean alive;
 
     public Game() {
         alive = true;
+
+        bulletPool = new ArrayList<Bullet>();
+        for (int i = 1; i <= 60; i++) {
+            bulletPool.add(new Bullet(0,0,0,0));
+        }
+
         bullets = new ArrayList<Bullet>();
         mainLoop = new Thread() {
             @Override
@@ -54,6 +61,7 @@ public class Game extends Observable {
             }
         }
         for(Bullet bullet : toRemove) {
+            bulletPool.add(bullet);
             bullets.remove(bullet);
         }
     }
@@ -70,14 +78,18 @@ public class Game extends Observable {
         return bullets;
     }
 
+
     public void burstBullets(int x, int y) {
-        bullets.add(new Bullet(x, y, 1, 0));
-        bullets.add(new Bullet(x, y, 0, 1));
-        bullets.add(new Bullet(x, y, -1, 0));
-        bullets.add(new Bullet(x, y, 0, -1));
-        bullets.add(new Bullet(x, y, 1, 1));
-        bullets.add(new Bullet(x, y, 1, -1));
-        bullets.add(new Bullet(x, y, -1, 1));
-        bullets.add(new Bullet(x, y, -1, -1));
+        for (int dy = -1; dy <= 1; dy++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                if (dx != 0 || dy != 0) {
+                    Bullet bullet = bulletPool.get(0);
+                    bullet.setCoord(x, y, dx, dy);
+                    bullets.add(bullet);
+                    bulletPool.remove(0);;
+                }
+            }
+        }
     }
+
 }
