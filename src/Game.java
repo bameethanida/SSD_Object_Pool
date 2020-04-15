@@ -64,6 +64,7 @@ public class Game extends Observable {
             bulletPool.add(bullet);
             bullets.remove(bullet);
         }
+        toRemove.clear();
     }
 
     public int getWidth() {
